@@ -116,13 +116,13 @@
         </div>
 
       </div>
-    </section><!-- End About Section -->
+    </section>End About Section
 
     
 
     <!-- ======= Services Section ======= -->
     <section id="services" class="services section-bg">
-      <div class="container" data-aos="fade-up">
+      <div class="container">
 
         <div class="section-title">
           <h2>Services</h2>
@@ -130,9 +130,7 @@
         </div>
 
         <div id = "People" class="row">
-            <!-- <span id = "People"> -->
-
-          <div  id = "box" class="col-md-6 col-lg-4 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+          <div  id = "box" class="col-md-6 col-lg-4 d-flex align-items-stretch">
             <div class="icon-box" id = "box2">
               <h4 class="title"><a href="">Friend</a></h4>
               <div class="text-center" style="padding-top: 30px;">
@@ -149,10 +147,7 @@
             </div>
             </div>
           </div>
-
-        <!-- </span> -->
-
-          <div id = "plus" class="col-md-6 col-lg-4 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="200" onclick="addPerson()">
+          <div id = "plus" class="col-md-6 col-lg-4 d-flex align-items-stretch" onclick="addPerson()">
             <div class="icon-box">
             <body>
                 <p id="demo">+</p>
@@ -169,29 +164,7 @@
 
 <!-- submit button -->
 
-    <div class="text-center" style="padding-top: 40px;"><button onclick="handle(getUserInfo())" type="submit" class="btn btn-secondary btn-lg">SUBMIT</button></div>
-    
-    <script>
-      function getUserInfo() {
-        addresses = []
-
-        var i;
-        var length = document.getElementById("People").children.length;
-
-        for(i = 1; i <= length-1; i++)
-        {
-          var address = document.getElementById("address" + i).value;
-          var city = document.getElementById("city" + i).value;
-          addresses.push(address + " " + city);
-          console.log(address);
-        }
-
-
-        console.log(addresses.length);
-        //handle(addresses);
-        return addresses
-      }
-      </script>
+    <div class="text-center" style="padding-top: 40px;"><button onclick="getUserInfo()" type="submit" class="btn btn-secondary btn-lg">SUBMIT</button></div>
 
 <section>
     
@@ -213,114 +186,67 @@
 
 </section>
 
-    <script>     
-    
-    // Material Select Initialization
-$(document).ready(function() {
-$('.mdb-select').materialSelect();
-});
+    <script>
 
-    (function($) {
-    var CheckboxDropdown = function(el) {
-    var _this = this;
-    this.isOpen = false;
-    this.areAllChecked = false;
-    this.$el = $(el);
-    this.$label = this.$el.find('.dropdown-label');
-    this.$checkAll = this.$el.find('[data-toggle="check-all"]').first();
-    this.$inputs = this.$el.find('[type="checkbox"]');
-    
-    this.onCheckBox();
-    
-    this.$label.on('click', function(e) {
-      e.preventDefault();
-      _this.toggleOpen();
-    });
-    
-    this.$checkAll.on('click', function(e) {
-      e.preventDefault();
-      _this.onCheckAll();
-    });
-    
-    this.$inputs.on('change', function(e) {
-      _this.onCheckBox();
-    });
-  };
-  
-  CheckboxDropdown.prototype.onCheckBox = function() {
-    this.updateStatus();
-  };
-  
-  CheckboxDropdown.prototype.updateStatus = function() {
-    var checked = this.$el.find(':checked');
-    
-    this.areAllChecked = false;
-    this.$checkAll.html('Check All');
-    
-    if(checked.length <= 0) {
-      this.$label.html('Select Options');
-    }
-    else if(checked.length === 1) {
-      this.$label.html(checked.parent('label').text());
-    }
-    else if(checked.length === this.$inputs.length) {
-      this.$label.html('All Selected');
-      this.areAllChecked = true;
-      this.$checkAll.html('Uncheck All');
-    }
-    else {
-      this.$label.html(checked.length + ' Selected');
-    }
-  };
-  
-  CheckboxDropdown.prototype.onCheckAll = function(checkAll) {
-    if(!this.areAllChecked || checkAll) {
-      this.areAllChecked = true;
-      this.$checkAll.html('Uncheck All');
-      this.$inputs.prop('checked', true);
-    }
-    else {
-      this.areAllChecked = false;
-      this.$checkAll.html('Check All');
-      this.$inputs.prop('checked', false);
-    }
-    
-    this.updateStatus();
-  };
-  
-  CheckboxDropdown.prototype.toggleOpen = function(forceOpen) {
-    var _this = this;
-    
-    if(!this.isOpen || forceOpen) {
-       this.isOpen = true;
-       this.$el.addClass('on');
-      $(document).on('click', function(e) {
-        if(!$(e.target).closest('[data-control]').length) {
-         _this.toggleOpen();
+
+      /* 
+      * Send user's form data to our HTTP trigger
+      */
+      async function handle(addresses){
+
+        var functionUrl = "/api/HttpTrigger1";
+        const resp = await fetch (functionUrl, {
+              method: 'POST',
+              //body:JSON.stringify("hello world"),
+              headers: {
+                'Content-Type': 'application/json'
+              },
+          });
+
+        //await restaurant data from Yelp API
+        var data = await resp.json();
+        var newData = JSON.stringify(data.results);
+
+        var obj = JSON.parse(newData);
+
+        $('#resultsDiv').empty(); //need to clear results every time the user searches
+
+        document.getElementById("address1").innerHTML="Cuisine: " + cuisine;
+
+
+
+      }
+
+      function getUserInfo() {
+        addresses = []
+
+        var i;
+        var length = document.getElementById("People").children.length;
+
+        for(i = 1; i <= length-1; i++)
+        {
+          var address = document.getElementById("address" + i).value;
+          var city = document.getElementById("city" + i).value;
+          addresses.push(address + " " + city);
+          console.log(address);
         }
-      });
-    }
-    else {
-      this.isOpen = false;
-      this.$el.removeClass('on');
-      $(document).off('click');
-    }
-  };
-  
-  var checkboxesDropdowns = document.querySelectorAll('[data-control="checkbox-dropdown"]');
-  for(var i = 0, length = checkboxesDropdowns.length; i < length; i++) {
-    new CheckboxDropdown(checkboxesDropdowns[i]);
-  }
-})(jQuery);
-    
-    // adds the addtion box to enter another users information 
+
+
+        console.log(addresses.length);
+        handle(addresses);
+        return addresses;
+      }
+
+
+
+    // adds the addition box to enter another users information 
     function addPerson(){
         var addP = document.createElement("div");
         var length = document.getElementById("People").children.length;
-        length
+        //length
 
         
-        addP.innerHTML = `<div  id = "box" class="col-md-6 col-lg-4 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+        addP.innerHTML = `<div  id = "box" class="col-md-6 col-lg-4 d-flex align-items-stretch">
             <div class="icon-box" id = "box2">
               <h4 class="title"><a href="">Friend</a></h4>
               <div class="text-center" style="padding-top: 30px;">
@@ -370,14 +296,14 @@ $('.mdb-select').materialSelect();
 
     <!-- ======= Portfolio Section ======= -->
     <section id="portfolio" class="portfolio">
-      <div class="container" data-aos="fade-up">
+      <div class="container">
 
         <div class="section-title">
           <h2>Portfolio</h2>
           <p>Pick a Food Category</p>
         </div>
 
-        <div class="row" data-aos="fade-up" data-aos-delay="100">
+        <div class="row" data-aos-delay="100">
           <div class="col-lg-12">
             <ul id="portfolio-flters">
               <li data-filter="*" class="filter-active">All</li>
@@ -388,19 +314,15 @@ $('.mdb-select').materialSelect();
           </div>
         </div>
 
-        <div class="row portfolio-container" data-aos="fade-up" data-aos-delay="200">
+        <div class="row portfolio-container" data-aos-delay="200">
 
           <div class="col-lg-4 col-md-6 portfolio-item filter-app">
             <div class="portfolio-wrap">
               <img src="" class="img-fluid" alt="">
-              <!-- <div class="portfolio-links"></div> -->
-                <!-- <a href="assets/img/portfolio/portfolio-1.jpg" data-galleryery="portfolioGallery" class="portfolio-lightbox" title="App 1"><i class="bi bi-plus"></i></a> -->
-                <!-- <a href="portfolio-details.html" title="More Details"><i class="bi bi-link"></i></a> -->
-              <!-- </div> -->
-              <!-- <div class="portfolio-info"> -->
+              <div class="portfolio-info">
                 <h4>Resturant Add</h4>
                 <p>App</p>
-              <!-- </div> -->
+              </div>
             </div>
           </div>
 
@@ -439,7 +361,7 @@ $('.mdb-select').materialSelect();
     <section>
       <html>
         <head>
-          <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
+          <!-- <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
           <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css"/>
       
           <script type="text/javascript">
@@ -447,7 +369,6 @@ $('.mdb-select').materialSelect();
               L.mapquest.key = 'lYrP4vF3Uk5zgTiGGuEzQGwGIVDGuy24';
       
               // Geocode three locations, then call the createMap callback
-              //
               L.mapquest.geocoding().geocode(['201 E Randolph St, Chicago, IL', 'Buffalo, NY', 'Denver, CO'], createMap);
       
               function createMap(error, response) {
@@ -481,7 +402,7 @@ $('.mdb-select').materialSelect();
                 return L.featureGroup(group);
               }
             }
-          </script>
+          </script> -->
         </head>
       
         <body style="border: 0; margin: 0;">
@@ -493,8 +414,7 @@ $('.mdb-select').materialSelect();
   </main><!-- End #main -->
 
   <!-- ======= Footer ======= -->
-  <footer id="footer">
-
+  <!-- <footer id="footer">
     <div class="footer-newsletter">
       <div class="container">
         <div class="row justify-content-center">
@@ -508,11 +428,9 @@ $('.mdb-select').materialSelect();
         </div>
       </div>
     </div>
-
     <div class="footer-top">
       <div class="container">
         <div class="row">
-
           <div class="col-lg-3 col-md-6 footer-contact">
             <h3>Ninestars</h3>
             <p>
@@ -523,7 +441,6 @@ $('.mdb-select').materialSelect();
               <strong>Email:</strong> info@example.com<br>
             </p>
           </div>
-
           <div class="col-lg-3 col-md-6 footer-links">
             <h4>Useful Links</h4>
             <ul>
@@ -534,7 +451,6 @@ $('.mdb-select').materialSelect();
               <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
             </ul>
           </div>
-
           <div class="col-lg-3 col-md-6 footer-links">
             <h4>Our Services</h4>
             <ul>
@@ -545,7 +461,6 @@ $('.mdb-select').materialSelect();
               <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
             </ul>
           </div>
-
           <div class="col-lg-3 col-md-6 footer-links">
             <h4>Our Social Networks</h4>
             <p>Cras fermentum odio eu feugiat lide par naso tierra videa magna derita valies</p>
@@ -557,11 +472,9 @@ $('.mdb-select').materialSelect();
               <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
             </div>
           </div>
-
         </div>
       </div>
     </div>
-
     <div class="container py-4">
       <div class="copyright">
         &copy; Copyright <strong><span>Ninestars</span></strong>. All Rights Reserved
@@ -571,10 +484,10 @@ $('.mdb-select').materialSelect();
         <!-- You can delete the links only if you purchased the pro version. -->
         <!-- Licensing information: https://bootstrapmade.com/license/ -->
         <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/ninestars-free-bootstrap-3-theme-for-creative/ -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        <!-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
       </div>
     </div>
-  </footer><!-- End Footer -->
+  </footer>End Footer --> 
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
